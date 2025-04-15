@@ -11,6 +11,7 @@
 
 namespace Symfony\Component\Notifier\Bridge\Discord\Tests;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Notifier\Bridge\Discord\DiscordOptions;
 use Symfony\Component\Notifier\Bridge\Discord\Embeds\DiscordAuthorEmbedObject;
@@ -190,5 +191,24 @@ final class DiscordOptionsTest extends TestCase
             'icon_url' => 'https://icon.ur.l/',
             'proxy_icon_url' => 'https://proxy.ic.on/url',
         ]);
+    }
+
+    #[DataProvider('getRecipientIdProvider')]
+    public function testGetRecipientId(?string $expected, DiscordOptions $options)
+    {
+        $this->assertSame($expected, $options->getRecipientId());
+    }
+
+    public static function getRecipientIdProvider(): iterable
+    {
+        yield [null, new DiscordOptions()];
+        yield ['foo', (new DiscordOptions())->recipient('foo')];
+    }
+
+    public function testToArrayUnsetsRecipientId()
+    {
+        $options = (new DiscordOptions())->recipient('foo');
+
+        $this->assertSame([], $options->toArray());
     }
 }
