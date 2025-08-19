@@ -31,6 +31,8 @@ final class DiscordTransportFactoryTest extends AbstractTransportFactoryTestCase
         yield [
             'discord://host.test?webhook_id=testWebhookId',
             'discord://token@host.test?webhook_id=testWebhookId',
+        ];
+        yield [
             'discord+bot://host.test',
             'discord+bot://token@host.test',
         ];
