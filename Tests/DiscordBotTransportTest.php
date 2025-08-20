@@ -15,7 +15,6 @@ use Symfony\Component\HttpClient\MockHttpClient;
 use Symfony\Component\HttpClient\Response\JsonMockResponse;
 use Symfony\Component\Notifier\Bridge\Discord\DiscordBotTransport;
 use Symfony\Component\Notifier\Bridge\Discord\DiscordOptions;
-use Symfony\Component\Notifier\Exception\LengthException;
 use Symfony\Component\Notifier\Exception\LogicException;
 use Symfony\Component\Notifier\Exception\TransportException;
 use Symfony\Component\Notifier\Message\ChatMessage;
@@ -55,16 +54,6 @@ final class DiscordBotTransportTest extends TransportTestCase
         $this->expectExceptionMessage('Missing configured recipient id on Discord message.');
 
         $transport->send(new ChatMessage('testMessage'));
-    }
-
-    public function testSendChatMessageWithMoreThan2000CharsThrowsLogicException()
-    {
-        $transport = self::createTransport();
-
-        $this->expectException(LengthException::class);
-        $this->expectExceptionMessage('The subject length of a Discord message must not exceed 2000 characters.');
-
-        $transport->send(new ChatMessage(str_repeat('囍', 2001), (new DiscordOptions())->recipient('channel_id')));
     }
 
     public function testSendWithErrorResponseThrows()
