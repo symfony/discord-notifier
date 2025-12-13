@@ -12,6 +12,7 @@
 namespace Symfony\Component\Notifier\Bridge\Discord\Tests;
 
 use Symfony\Component\HttpClient\MockHttpClient;
+use Symfony\Component\HttpClient\Response\MockResponse;
 use Symfony\Component\Notifier\Bridge\Discord\DiscordTransport;
 use Symfony\Component\Notifier\Exception\LengthException;
 use Symfony\Component\Notifier\Exception\TransportException;
@@ -20,7 +21,6 @@ use Symfony\Component\Notifier\Message\SmsMessage;
 use Symfony\Component\Notifier\Test\TransportTestCase;
 use Symfony\Component\Notifier\Tests\Transport\DummyMessage;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
-use Symfony\Contracts\HttpClient\ResponseInterface;
 
 final class DiscordTransportTest extends TransportTestCase
 {
@@ -57,15 +57,7 @@ final class DiscordTransportTest extends TransportTestCase
 
     public function testSendWithErrorResponseThrows()
     {
-        $response = $this->createMock(ResponseInterface::class);
-        $response->expects($this->exactly(2))
-            ->method('getStatusCode')
-            ->willReturn(400);
-        $response->expects($this->once())
-            ->method('getContent')
-            ->willReturn(json_encode(['message' => 'testDescription', 'code' => 'testErrorCode']));
-
-        $client = new MockHttpClient(static fn (): ResponseInterface => $response);
+        $client = new MockHttpClient(new MockResponse(json_encode(['message' => 'testDescription', 'code' => 'testErrorCode']), ['http_code' => 400]));
 
         $transport = self::createTransport($client);
 
